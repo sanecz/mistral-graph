@@ -1,0 +1,89 @@
+---
+version: '2.0'
+
+workflows:
+  setup_vm:
+    tasks:
+      start:
+        action: create_vm
+        on-success:
+          - setup_hard
+        on-error:
+          - vm.destroy
+
+      setup_dns:
+        workflow: dns
+        on-success:
+          - setup_hard
+
+      setup_hard:
+        workflow: setup_hard
+        on-success:
+          - start_vm
+          - notify
+
+      start_vm:
+        action: start.vm
+        on-success:
+          - setup_soft
+          - setup_dev
+          - notify
+
+      setup_soft:
+        workflow: setup_soft
+        on-success:
+          - notify
+
+      setup_dev:
+        workflow: setup_dev
+        on-success:
+          - notify
+
+      notify:
+        action: notify_f00
+        on-complete:
+          - notify_slack
+
+  setup_hard:
+    task-defaults:
+      on-error:
+        - fail
+      on-complete:
+        - report_sn
+      on-success:
+        - notify_inventory
+
+    tasks:
+      assign_nic:
+        action: assign.nic
+        on-success:
+          - assign_disks
+          - assign_boot
+          - assign_ram
+
+      assign_disks:
+        action: assign.disks
+        on-success:
+          - notify_ok
+
+      assign_boot:
+        action: assign.tftp
+        on-success:
+          - notify_ok
+        on-complete:
+
+      assign_ram:
+        action: assign.ram
+        on-success:
+          - notify_ok
+
+      notify_ok:
+        action: notify
+        on-complete: # override
+
+  setup_soft:
+    tasks:
+      setup_ssh:
+        action: setup.ssh
+      setup_pam:
+        action: setup.pam

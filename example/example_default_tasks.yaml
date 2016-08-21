@@ -1,0 +1,31 @@
+workflows:
+  workflow-default-success:
+    task-defaults:
+      on-success:
+        - on-success-default
+    tasks:
+      action1:
+        action: noop
+      on-success-default:
+        action: noop
+
+  workflow-default-error:
+    task-defaults:
+      on-error:
+        - on-error-default
+    tasks:
+      action1:
+        action: noop
+      on-error-default:
+        action: noop
+
+  workflow-default-complete:
+    task-defaults:
+      on-complete:
+        - on-complete-default
+
+    tasks:
+      action1:
+        action: noop
+      on-complete-default:
+        action: noop

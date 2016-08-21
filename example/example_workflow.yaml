@@ -1,0 +1,18 @@
+workflows:
+  workflow_name:
+    tasks:
+      task_name:
+        action: action or workflow
+        on-error:
+          - on-error-action
+        on-success:
+          - on-success-action
+        on-complete:
+          - on-complete-action
+
+      on-error-action:
+        action: noop
+      on-success-action:
+        action: noop
+      on-complete-action:
+        action: noop
